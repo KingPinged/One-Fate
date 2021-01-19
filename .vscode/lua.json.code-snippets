@@ -1,0 +1,144 @@
+{
+	// Place your One-Fate workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+	"Knit": {
+		"prefix": ["knit"],
+		"body": ["local Knit = require(game:GetService(\"ReplicatedStorage\").Knit)"],
+		"description": "Require the Knit module"
+	},
+
+	"Service": {
+		"prefix": ["service"],
+		"body": ["local ${0:Name}Service = game:GetService(\"${0:Name}Service\")"],
+		"description": "Roblox Service"
+	},
+	"Knit Service": {
+		"prefix": ["knitservice"],
+		"body": [
+			"local Knit = require(game:GetService(\"ReplicatedStorage\").Knit)",
+			"",
+			"local ${0:$TM_FILENAME_BASE} = Knit.CreateService {",
+			"\tName = \"${0:$TM_FILENAME_BASE}\";",
+			"\tClient = {};",
+			"}",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}:KnitStart()",
+			"\t",
+			"end",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}:KnitInit()",
+			"\t",
+			"end",
+			"",
+			"",
+			"return ${0:$TM_FILENAME_BASE}"
+		],
+		"description": "Knit Service template"
+	},
+	"Knit Controller": {
+		"prefix": ["knitcontroller"],
+		"body": [
+			"local Knit = require(game:GetService(\"ReplicatedStorage\").Knit)",
+			"",
+			"local ${0:$TM_FILENAME_BASE} = Knit.CreateController { Name = \"${0:$TM_FILENAME_BASE}\" }",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}:KnitStart()",
+			"\t",
+			"end",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}:KnitInit()",
+			"\t",
+			"end",
+			"",
+			"",
+			"return ${0:$TM_FILENAME_BASE}"
+		],
+		"description": "Knit Controller template"
+	},
+	"Knit Component": {
+		"prefix": ["knitcomponent"],
+		"body": [
+			"local Knit = require(game:GetService(\"ReplicatedStorage\").Knit)",
+			"local Maid = require(Knit.Util.Maid)",
+			"",
+			"local ${0:$TM_FILENAME_BASE} = {}",
+			"${0:$TM_FILENAME_BASE}.__index = ${0:$TM_FILENAME_BASE}",
+			"",
+			"${0:$TM_FILENAME_BASE}.Tag = \"${0:$TM_FILENAME_BASE}\"",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}.new(instance)",
+			"\t",
+			"\tlocal self = setmetatable({}, ${0:$TM_FILENAME_BASE})",
+			"\t",
+			"\tself._maid = Maid.new()",
+			"\t",
+			"\treturn self",
+			"\t",
+			"end",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}:Init()",
+			"end",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}:Deinit()",
+			"end",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}:Destroy()",
+			"\tself._maid:Destroy()",
+			"end",
+			"",
+			"",
+			"return ${0:$TM_FILENAME_BASE}"
+		],
+		"description": "Knit Component template"
+	},
+	"Knit Require": {
+		"prefix": ["knitrequire"],
+		"body": ["local ${1:Name} = require(Knit.${2:Util}.${1:Name})"],
+		"description": "Knit Require template"
+	},
+	"Class": {
+		"prefix": ["class"],
+		"body": [
+			"local ${0:$TM_FILENAME_BASE} = {}",
+			"${0:$TM_FILENAME_BASE}.__index = ${0:$TM_FILENAME_BASE}",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}.new()",
+			"\tlocal self = setmetatable({}, ${0:$TM_FILENAME_BASE})",
+			"\treturn self",
+			"end",
+			"",
+			"",
+			"function ${0:$TM_FILENAME_BASE}:Destroy()",
+			"\t",
+			"end",
+			"",
+			"",
+			"return ${0:$TM_FILENAME_BASE}"
+		],
+		"description": "Lua Class"
+	}
+}
