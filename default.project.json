@@ -5,29 +5,22 @@
 
     "ServerScriptService": {
       "$className": "ServerScriptService",
-  
-      "GameFiles": {
-        "$className": "Folder",
-        "$path": "src/ServerScriptService"
-      }
+      "$path": "src/ServerScriptService"
     },
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-  
-      "GameFiles": {
-        "$className": "Folder",
-        "$path": "src/ReplicatedStorage"
-      }
+      "$path": "src/ReplicatedStorage"
     },
     "ReplicatedFirst": {
       "$className": "ReplicatedFirst",
-  
-      "GameFiles": {
-        "$className": "Folder",
-        "$path": "src/ReplicatedFirst"
+      "$path": "src/ReplicatedFirst"
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts" : {
+        "$className": "StarterPlayerScripts",
+        "$path": "src/StarterPlayerScripts"
       }
     }
-
-
   }
 }

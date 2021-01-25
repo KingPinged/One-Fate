@@ -1,9 +1,9 @@
 local ContentProvider = game:GetService("ContentProvider")
 local Players = game:GetService("Players")
 
-local rs = game.ReplicatedStorage
+local rs = game:GetService("ReplicatedStorage")
 local rf = game:GetService("ReplicatedFirst")
-
+local StarterPlayer = game:GetService("StarterPlayer")
 local StarterGui = game:GetService("StarterGui")
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 
@@ -43,13 +43,10 @@ local time = os.time()
 
 -- create a table of assets to be loaded
 local assets = {
-	sounds = rs:WaitForChild("Storage"):WaitForChild("Sounds"):GetDescendants(),
 	objects = workspace:GetDescendants(),
-	images = rs:WaitForChild("Storage"):WaitForChild("Images"):GetDescendants(),
 	builds = rs:WaitForChild("Storage"):WaitForChild("Builds"):GetDescendants(),
 	models = rs:WaitForChild("Storage"):WaitForChild("Models"):GetDescendants(),
 	scripts = rs:WaitForChild("Storage"):WaitForChild("Scripts"):GetDescendants(),
-	modules = rs:WaitForChild("Modules"):GetDescendants(),
 	guis =  rs:WaitForChild("Storage"):WaitForChild("Guis"):GetDescendants()
 }
 
@@ -81,6 +78,9 @@ wait(3)
 
 
 --Startup module
-require(rs.Modules.StartUp):Start(screenGui)
+
+require(StarterPlayer.StarterPlayerScripts.knitStartUp)
+
+screenGui:ClearAllChildren()
 
 --script:Destroy()
