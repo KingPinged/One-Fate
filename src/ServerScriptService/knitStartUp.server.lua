@@ -11,9 +11,10 @@ Knit.Effects = ReplicatedStorage.Shared.PowerModules.Effects
 Knit.StateModules = ReplicatedStorage.Shared.StateModules
 --Knit.InventoryModules = serverMod.InventoryModules
 Knit.MobMod = serverMod.mobData
+Knit.classes = ServerScriptService.classes
+Knit.RepMods = ReplicatedStorage.Storage.Modules
 
 -- Load all services:
 Knit.AddServices(script.Parent.Services)
 
 Knit.Start()
-print("Knit SERVER - Runtime Started")

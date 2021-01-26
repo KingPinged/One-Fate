@@ -155,7 +155,8 @@ while true do
 		for Spawner, NPCS in next, Spawners do
 			local InRange = PlayerInRange(Spawner.Position, MobData[Category.Name].SpecifiedHideRange[Spawner] or MobData[Category.Name].NPCHideRange)
 			for _, Mob in next, NPCS do
-				if not InRange and IsAlive(Mob.Model) then					--| Reparent to ReplicatedStorage;
+				if not InRange and IsAlive(Mob.Model) then	
+					print("reparenting")				--| Reparent to ReplicatedStorage;
 					Mob.Model.Parent = game.ReplicatedStorage;
 				elseif InRange and IsAlive(Mob.Model) then
 					Mob.Model.Parent = Config.SpawnHiearchy or game.Workspace;
