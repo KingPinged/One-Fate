@@ -14,24 +14,48 @@ local combatClass=  require(Knit.classes.combatPlayer)
 
 local players = {}
 function combatHandlerService:KnitStart()
+    self.Client.handleMove:Connect(function(Player, Action, Bool)
+
+        local class = players[Player]
+
+        if class then
+            class:action(Action,Bool)
+        end
+
+        if not class then
+
+            
+           -- players[Player] = combatClass.new(Player,combatRay,self.Client.screenR) 
+           -- class = players[Player]
+        end
+        
+       -- class:action(Action,Bool)
+        end)
+
+end
+
+function combatHandlerService.removal(Player)
+    local class = players[Player]
+    if class then
+        players[Player] = nil
+    end
+end
+
+function combatHandlerService:setupPlayer(Player)
+
+    local punchHitBox = game.ServerStorage.Storage.combat:WaitForChild("PunchHitbox"):Clone()
+	punchHitBox.Parent = Player.Character
+
+
+    players[Player] = combatClass.new(Player,combatRay,self.Client.screenR) 
     
 end
 
 
 
-function combatHandlerService:KnitInit()
-    self.Client.handleMove:Connect(function(Player, Action, Bool)
 
-    local class = players[Player]
-    if class then
-    else 
-        players[Player] = combatClass.new(Player) 
-        class = players[Player]
-    end
-    
-   --print(class)
-    class:action(Action,Bool,self,combatRay)
-    end)
+
+function combatHandlerService:KnitInit()
 
 end
 

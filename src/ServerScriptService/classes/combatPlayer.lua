@@ -1,10 +1,19 @@
 local combatPlayer = {}
 combatPlayer.__index = combatPlayer
 
-function combatPlayer.new(player)
+function combatPlayer.new(player,combatRay, event)
     local self = setmetatable({}, combatPlayer)
     self.TweenService = game:GetService("TweenService")
-    self.player = player
+	self.player = player
+	local Char = player.Character
+	local Hum = Char.Humanoid
+	local HumRP = Char.HumanoidRootPart
+
+
+			
+	self.folder = player.FX
+
+
     self.PunchDebounce = false
     self.CanUseSkill = true
     self.HeavyDebounce = false
@@ -17,10 +26,106 @@ function combatPlayer.new(player)
 	self.FX = game.ServerStorage.Storage.combat:WaitForChild("FX")
 	self.HitAnims = game.ServerStorage.Storage.combat:WaitForChild("HitAnims")
 
-    self.PunchHitbox = game.ServerStorage.Storage.combat:WaitForChild("PunchHitbox")
-    local Char = self.player.Character
-	local Hum = Char:WaitForChild("Humanoid")
-    local HumRP = Char:WaitForChild("HumanoidRootPart")
+	local cloned = game.ServerStorage.Storage.combat:WaitForChild("PunchHitbox"):Clone()
+	cloned.Parent = player.Character
+	cloned.CFrame = Char["Right Arm"].CFrame
+
+	local weld = Instance.new("ManualWeld")
+	weld.Part0 = Char["Right Arm"]
+	weld.Part1 = cloned
+	weld.C0 = cloned.CFrame:inverse() * Char["Right Arm"].CFrame
+	weld.Parent = cloned
+
+	self.PunchHitbox = cloned
+	--self.PunchHitbox.Parent = self.folder
+	self.newHitbox = combatRay:Initialize(cloned, {Char})
+	local newHitbox = self.newHitbox
+				newHitbox:HitStop()
+
+				newHitbox.OnHit:Connect(function(Hit, EHum)
+					if  Char:FindFirstChild("Disabled") == nil then
+						local EHumRP = Hit.Parent:FindFirstChild("HumanoidRootPart")
+						if EHum and EHumRP then
+							newHitbox:HitStop()
+							--self.PunchHitbox:ClearAllChildren()
+							if EHum.Parent:FindFirstChild("Blocking") then
+								--self.folder:ClearAllChildren()
+								self:HitDmg(EHum,"Blocking")
+
+								event:Fire(player)
+                                --self.Client.screenR:Fire(self.player)
+								--ScreenR:FireClient(Player)
+
+								EHum.WalkSpeed = 2
+								delay(0.65,function()
+									EHum.WalkSpeed = 16
+								end)
+
+								self.InsertDisabled(EHumRP.Parent,0.7)
+
+								local BlockSound = self.Sounds.BlockPunch:Clone()
+								BlockSound.Parent = EHumRP
+								BlockSound.PlaybackSpeed = math.random(93,107)/100
+								BlockSound:Play()
+								--game.Debris:AddItem(BlockSound,0.4)	
+
+								local BlockParticle = self.FX.Block:Clone()
+								BlockParticle.Parent = EHumRP
+								BlockParticle:Emit(1)
+								--game.Debris:AddItem(BlockParticle,1)
+							else
+								--hitbox:Destroy()
+								self:HitDmg(EHum)
+
+								local FindBV = EHum.Parent:FindFirstChild("BodyVelocity")
+								if FindBV then
+									FindBV:Destroy()
+								end
+
+								if self.DoingCombo == 4 then
+									local Pos = HumRP.CFrame*CFrame.new(0,4,-20)
+
+									local BP = Instance.new("BodyPosition",EHumRP)
+									BP.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+									BP.D = 80
+									BP.P = 400
+									BP.Position = Pos.p
+									game.Debris:AddItem(BP,0.4)
+								end	
+
+								if self.DoingCombo == 1 then
+									local FirstHit = EHum:LoadAnimation(self.HitAnims.First)
+									FirstHit:Play()
+
+								elseif self.DoingCombo == 2 then
+									local SecondHit = EHum:LoadAnimation(self.HitAnims.Second)
+									SecondHit:Play()
+
+								elseif self.DoingCombo == 3 then
+									local ThirdHit = EHum:LoadAnimation(self.HitAnims.Third)
+									ThirdHit:Play()
+
+								elseif self.DoingCombo == 4 then
+									local FourthHit = EHum:LoadAnimation(self.HitAnims.Fourth)
+									FourthHit:Play()
+
+								end
+
+								event:Fire(player)
+
+								EHum.WalkSpeed = 2
+								delay(0.6,function()
+									EHum.WalkSpeed = 16
+								end)
+
+								self.InsertDisabled(EHumRP.Parent,0.7)
+
+								self:Hiteffect3(EHumRP)
+							end
+						end
+
+					end
+				end)
     
 
 	self.Punch1 = Hum:LoadAnimation(self.Anims:WaitForChild("Combo1"))
@@ -47,7 +152,7 @@ end
 function combatPlayer.InsertDisabled(Target, Time)
     local Disabled = Instance.new("BoolValue",Target)
     Disabled.Name = "Disabled"
-    game.Debris:AddItem(Disabled,Time)
+    --game.Debris:AddItem(Disabled,Time)
 end
 
 function combatPlayer:HiteffectBall(Target, Pos)
@@ -55,7 +160,7 @@ function combatPlayer:HiteffectBall(Target, Pos)
 		ClonedBall.Parent = Target
 		ClonedBall.CFrame = Pos
 		ClonedBall.CFrame = CFrame.new(ClonedBall.Position, Target.Position)
-		game.Debris:AddItem(ClonedBall,1)
+	--	game.Debris:AddItem(ClonedBall,1)
 
 		if self.DoingCombo == 4 then
 			ClonedBall.BrickColor = BrickColor.new("Neon orange")
@@ -74,7 +179,7 @@ function combatPlayer:DmgVisual(Target)
     local Tween = self.TweenService:Create(BillBoard,Info,Goal)
     Tween:Play()
 
-    game.Debris:AddItem(BillBoard,1)
+   -- game.Debris:AddItem(BillBoard,1)
 
     if self.DoingCombo == 1 then
         BillBoard.Text.Text = self.damages.Dmg1.."!"
@@ -128,26 +233,26 @@ function combatPlayer:Hiteffect3(Target)
         Sound.Parent = Target
         Sound.PlaybackSpeed = math.random(93,107)/100
         Sound:Play()
-        game.Debris:AddItem(Sound,1.5)
+      --  game.Debris:AddItem(Sound,1.5)
     else
         local Sound = self.Sounds.Punch1:Clone()
         Sound.Parent = self.HumRP
         Sound.PlaybackSpeed = math.random(93,107)/100
         Sound:Play()
-        game.Debris:AddItem(Sound,0.4)	
+       -- game.Debris:AddItem(Sound,0.4)	
     end
 
     local GoreFX = self.FX.Gore:Clone()
     GoreFX.Parent = Target
     GoreFX:Emit(1)
-    game.Debris:AddItem(GoreFX,1)
+   -- game.Debris:AddItem(GoreFX,1)
 end
 
-function combatPlayer:action(Action,Bool,Self, combatRay)
+function combatPlayer:action(Action,Bool)
 
     local Char = self.player.Character
-	local Hum = Char:WaitForChild("Humanoid")
-	local HumRP = Char:WaitForChild("HumanoidRootPart")
+	local Hum = Char.Humanoid
+	local HumRP = Char.HumanoidRootPart
 
 	if Action == "NormalPunch" then
 		if Char:FindFirstChild("Disabled") == nil and self.CanUseSkill == true and self.PunchDebounce == false and Char:FindFirstChild("Blocking") == nil then
@@ -215,129 +320,7 @@ function combatPlayer:action(Action,Bool,Self, combatRay)
 				self.Combo = 1
 			end	
 
-			local folder = Instance.new("Folder",workspace)
-			folder.Name = self.player.Name.." FX"
-			game.Debris:AddItem(folder,0.4)
-
-			delay(0.13,function()
-
-				local hitbox = self.PunchHitbox:Clone()
-				hitbox.Anchored = false
-				hitbox.CanCollide= false
-				hitbox.Massless = true
-				if self.DoingCombo == 2 or self.DoingCombo == 3 then
-					hitbox.CFrame = Char["Left Arm"].CFrame
-				elseif self.DoingCombo == 1 then
-					hitbox.CFrame = Char["Right Arm"].CFrame
-				elseif self.DoingCombo == 4 then
-					hitbox.CFrame = Char["Left Leg"].CFrame
-				end
-				hitbox.Parent = folder
-
-				local weld = Instance.new("ManualWeld")
-				if self.DoingCombo == 2 or self.DoingCombo == 3 then
-					weld.Part0 = Char["Left Arm"]
-				elseif self.DoingCombo == 1 then
-					weld.Part0 = Char["Right Arm"]
-				elseif self.DoingCombo == 4 then
-					weld.Part0 = Char["Left Leg"]
-				end
-				weld.Part1 = hitbox
-				if self.DoingCombo == 2 or self.DoingCombo == 3 then
-					weld.C0 = hitbox.CFrame:inverse() * Char["Left Arm"].CFrame
-				elseif self.DoingCombo == 1 then
-					weld.C0 = hitbox.CFrame:inverse() * Char["Right Arm"].CFrame
-				elseif self.DoingCombo == 4 then
-					weld.C0 = hitbox.CFrame:inverse() * Char["Left Leg"].CFrame
-				end
-				weld.Parent = hitbox
-
-				local newHitbox = combatRay:Initialize(hitbox)
-				newHitbox:HitStart()
-				newHitbox.OnHit:Connect(function(Hit, humanoid)
-					if Hit.Parent ~= Char and Char:FindFirstChild("Disabled") == nil then
-						local EHum = Hit.Parent:FindFirstChild("Humanoid")
-						local EHumRP = Hit.Parent:FindFirstChild("HumanoidRootPart")
-						if EHum and EHumRP then
-							if EHum.Parent:FindFirstChild("Blocking") then
-								folder:Destroy()
-								self:HitDmg(EHum,"Blocking")
-
-                                Self.Client.screenR:Fire(self.player)
-								--ScreenR:FireClient(Player)
-
-								EHum.WalkSpeed = 2
-								delay(0.65,function()
-									EHum.WalkSpeed = 16
-								end)
-
-								self.InsertDisabled(EHumRP.Parent,0.7)
-
-								local BlockSound = self.Sounds.BlockPunch:Clone()
-								BlockSound.Parent = EHumRP
-								BlockSound.PlaybackSpeed = math.random(93,107)/100
-								BlockSound:Play()
-								game.Debris:AddItem(BlockSound,0.4)	
-
-								local BlockParticle = self.FX.Block:Clone()
-								BlockParticle.Parent = EHumRP
-								BlockParticle:Emit(1)
-								game.Debris:AddItem(BlockParticle,1)
-							else
-								hitbox:Destroy()
-								self:HitDmg(EHum)
-
-								local FindBV = EHum.Parent:FindFirstChild("BodyVelocity")
-								if FindBV then
-									FindBV:Destroy()
-								end
-
-								if self.DoingCombo == 4 then
-									local Pos = HumRP.CFrame*CFrame.new(0,4,-20)
-
-									local BP = Instance.new("BodyPosition",EHumRP)
-									BP.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
-									BP.D = 80
-									BP.P = 400
-									BP.Position = Pos.p
-									game.Debris:AddItem(BP,0.4)
-								end	
-
-								if self.DoingCombo == 1 then
-									local FirstHit = EHum:LoadAnimation(self.HitAnims.First)
-									FirstHit:Play()
-
-								elseif self.DoingCombo == 2 then
-									local SecondHit = EHum:LoadAnimation(self.HitAnims.Second)
-									SecondHit:Play()
-
-								elseif self.DoingCombo == 3 then
-									local ThirdHit = EHum:LoadAnimation(self.HitAnims.Third)
-									ThirdHit:Play()
-
-								elseif self.DoingCombo == 4 then
-									local FourthHit = EHum:LoadAnimation(self.HitAnims.Fourth)
-									FourthHit:Play()
-
-								end
-
-                                Self.Client.screenR:Fire(self.player)
-								--ScreenR:FireClient(Player)
-
-								EHum.WalkSpeed = 2
-								delay(0.6,function()
-									EHum.WalkSpeed = 16
-								end)
-
-								self.InsertDisabled(EHumRP.Parent,0.7)
-
-								self:Hiteffect3(EHumRP)
-							end
-						end
-
-					end
-				end)
-			end)	
+			self.newHitbox:HitStart()
 		end
 	elseif Action == "Block" then
 		if Bool == false and self.isBlocking == true then

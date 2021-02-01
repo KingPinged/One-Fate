@@ -8,10 +8,13 @@ local Player = game.Players.LocalPlayer
 
 local UIS = game:GetService("UserInputService")
 
-combatHandlerService.handleMove:Fire()
+
+game.ReplicatedStorage.workspace.knitReady.Changed:Wait()
+
+print("WOW TEST COMPLETE! DOGOO WOOOOOW")
+--combatHandlerService.handleMove:Fire()
 --Remote:FireServer()
 
-local CanDoAnything = true
 local Blocking = false
 
 local RunService = game:GetService("RunService")
@@ -58,9 +61,7 @@ combatHandlerService.screenR:Connect(function(Action)
 end)
 
 RunService.RenderStepped:Connect(function()
-	local Player = game.Players.LocalPlayer
-	local Char = Player.Character
-	local Hum = Char:FindFirstChild("Humanoid")
+	local Char = Player.Character or Player.CharacterAdded:Wait()
 
 	if UIS:IsKeyDown(Enum.KeyCode.F) then
 		--print("pressed")

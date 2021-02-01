@@ -18,4 +18,7 @@ Knit.AddControllers(script.Parent.Controllers)
 
 Knit.Start()
 
+game.ReplicatedStorage.workspace.knitReady.Value = true
+
+print("Hey there! Welcome to the secret lab. If you find anything in red, please tell the dev team so we can improve player experience (including yours!)")
 return a;

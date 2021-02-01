@@ -13,6 +13,7 @@ Knit.StateModules = ReplicatedStorage.Shared.StateModules
 Knit.MobMod = serverMod.mobData
 Knit.classes = ServerScriptService.classes
 Knit.RepMods = ReplicatedStorage.Storage.Modules
+Knit.modules = serverMod
 
 -- Load all services:
 Knit.AddServices(script.Parent.Services)

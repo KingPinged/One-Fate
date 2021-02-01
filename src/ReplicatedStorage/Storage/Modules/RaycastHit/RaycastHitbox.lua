@@ -130,7 +130,7 @@ ________________________________________________________________________________
 local RaycastHitbox = { 
 	Version = "3.2",
 	AttachmentName = "DmgPoint",
-	DebugMode = true,
+	DebugMode = false,
 	WarningMessage = false
 }
 
